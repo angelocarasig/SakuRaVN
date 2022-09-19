@@ -1,17 +1,17 @@
 import { Paper, Title, Text } from "@mantine/core";
-import ThemeSwitch from "../components/ThemeSwitch";
+import {HeaderTabs} from "../components/Header";
 
 const Home = () => {
   return (
     <div className="Home" >
       <Paper radius={0} style={{ minHeight: "100vh" }}>
+        <HeaderTabs tabs={["Home", "Profile", "About", "Source"]} />
         <Title order={1} align="center">
-          🌸 Welcome to SakuRa VN 🌸
+          Home Page
         </Title>
         <Text size="md" align="center">
           Test
         </Text>
-        <ThemeSwitch />
       </Paper>
     </div>
   );
