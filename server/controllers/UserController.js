@@ -12,21 +12,12 @@ const getAllUsers = async (req, res) => {
     } 
     catch (e) {
       res.status(500).json({ message: e.message });
-    }
+    };
 };
 
 const getUser = async (req, res) => {
-    try {
-        const user = await User.find({"id": req.params.id});
-        if (user == null) {
-            return res.status(404).json({message: "User not found."});
-        } 
-        res.send(user);
-      } 
-      catch (e) {
-        return res.status(500).json({ message: e.message });
-      }
-}
+    res.send(res.user);
+};
 
 const addUser = (req, res) => {
 
@@ -43,13 +34,65 @@ const addUser = (req, res) => {
         }
         catch (e) {
             res.status(400).json({ message: e.message });
-        }
+        };
     })
     .catch((e) => {console.log(e)});
+};
+
+// Only updates username as the other value is primary
+const updateUser = (req, res) => {
+    vndb.query(`get user basic (id = ${req.params.id})`)
+    .then((response) => {
+        const userToUpdate = new User({
+            id: response.items[0].id,
+            username: response.items[0].username
+        });
+        console.log(userToUpdate.username);
+        console.log(userToUpdate.id);
+
+        try {
+            const updatedUser = User.updateMany({"id": userToUpdate.id}, {"$set": {"username": userToUpdate.username}});
+            res.send("User has been updated.");
+        }
+        catch (e) {
+            res.status(400).json({ message: e.message });
+        };
+    })
+    .catch((e) => {console.log(e)}); 
+}
+
+const deleteUser = async (req, res) => {
+    try {
+        await User.deleteMany({"id": res.user.id});
+        res.status(200).json({message: "User has been removed."});
+    }
+    catch (e) {
+        res.status(500).json({message: "User could not be removed."});
+    };
+};
+
+async function searchUser(req, res, next) {
+    let user;
+    try {
+        user = await User.find({"id": req.params.id});
+        if (user == null) {
+            return res.status(404).json({message: "User does not exist."});
+        } 
+      } 
+      catch (e) {
+        return res.status(500).json({ message: e.message });
+      };
+
+    // Returns array with only 1 element
+    res.user = user[0];
+    next();
 }
 
 module.exports = {
+    searchUser,
     getAllUsers,
     getUser,
-    addUser
+    addUser,
+    updateUser,
+    deleteUser
 }
