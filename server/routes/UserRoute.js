@@ -6,8 +6,11 @@ const UserController = require("../controllers/UserController");
 // Get all users
 router.get("/get", UserController.getAllUsers);
 
-// Get a users
+// Get a user
 router.get("/get/:id", UserController.searchUser, UserController.getUser);
+
+// Get uList
+router.get("/get/ulist/:id", UserController.getUList);
 
 // Add user
 router.post("/add/:id", UserController.addUser);

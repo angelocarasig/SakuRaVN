@@ -8,6 +8,11 @@ GET http://localhost:8080/user/get/110475
 
 ###
 
+// Get user ulist
+GET http://localhost:8080/user/get/ulist/110475
+
+###
+
 // Add user
 POST http://localhost:8080/user/add/110475
 
