@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@mantine/carousel": "^5.5.4",
     "@mantine/core": "^5.4.0",
     "@mantine/hooks": "^5.4.0",
     "@tabler/icons": "^1.96.0",
@@ -15,6 +16,7 @@
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
+    "axios": "^1.1.2",
     "framer-motion": "^7.3.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
