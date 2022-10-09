@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema({
         vn: Number,
         vote: Number,
         notes: String,
+        started: Date,
+        finished: Date,
+        added: Date,
+        lastmod: Date,
+        voted: Date,
+
     }],
 });
 

@@ -19,9 +19,14 @@ POST http://localhost:8080/user/add/110475
 ###
 
 // Delete User
-DELETE http://localhost:8080/user/delete/1
+DELETE http://localhost:8080/user/delete/110475
 
 ###
 
 // Update User
 PATCH http://localhost:8080/user/update/110475
+
+###
+
+// Update user and vnlist
+PATCH http://localhost:8080/user/update/novels/110475

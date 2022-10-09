@@ -65,7 +65,7 @@ const updateUser = (req, res) => {
       }
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
     });
 };
 
@@ -94,40 +94,10 @@ async function searchUser(req, res, next) {
   next();
 }
 
-const getUserList = async (req, res) => {
-  const vndb = new VNDB("clientname", {});
-  
-  let userList = [];
-  let pagination = 1;
-  let searchingUser = true;
-
-  while (searchingUser) {
-    await vndb.query(`get ulist basic (uid=${req.params.id}) {"page": ${pagination}, "results":100}`)
-      .then((response) => {
-        userList.push(...response.items);
-
-        if (response.more === true) {
-          pagination++;
-        }
-        else {
-          searchingUser = false;
-        }
-      })
-      .catch ((e) => {
-        res.status(500).json({message: e.message});
-      })
-  }
-
-  vndb.destroy();
-
-  res.status(200).json(userList);
-};
-
 module.exports = {
   searchUser,
   getAllUsers,
   getUser,
-  getUserList,
   addUser,
   updateUser,
   deleteUser,
