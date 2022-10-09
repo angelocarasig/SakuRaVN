@@ -1,0 +1,22 @@
+// Get all users
+GET http://localhost:8080/user/get
+
+###
+
+// Get user
+GET http://localhost:8080/user/get/1
+
+###
+
+// Add user
+POST http://localhost:8080/user/add/110475
+
+###
+
+// Delete User
+DELETE http://localhost:8080/user/delete/2
+
+###
+
+// Update User
+PATCH http://localhost:8080/user/update/11045

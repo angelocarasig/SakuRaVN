@@ -3,20 +3,42 @@ const User = require("../models/User");
 
 // VNDB
 const VNDB = require("vndb-api");
-const { response } = require("express");
+const UserException = require("../exceptions/UserException");
 
+const getUserNovels = async (req, res) => {
+  res.json(res.ulist);
+}
+
+// Needs Middleware Function searchUser() in UserController
+const updateUserNovels = async (req, res) => {
+
+  const userToUpdate = new User({
+      id: res.user.id,
+      username: res.user.username,
+      vnlist: res.ulist,
+  });
+
+  try {
+      console.error("reached here 1");
+      await User.deleteMany({ id: res.user.id });
+      console.error("reached here 2");
+      const newUser = userToUpdate.save();
+      res.status(201).json({message: `Updated UserList for User ${res.user.id}`});
+  }
+  catch (e) {
+      res.status(400).json({ message: e.message });
+  }
+};
+
+// Middleware Functions
 async function _getUserList(req, res, next) {
-    let user;
 
-    try {
-        user = await User.find({ id: req.params.id });
-        if (user == null) {
-          return res.status(404).json({ message: "User does not exist." });
-        }
-      } 
-      catch (e) {
-        return res.status(500).json({ message: e.message });
-    };
+    let user = await User.find({ id: req.params.id });
+    
+    if (user.length <= 0) {
+      next(UserException.UserNotFound());
+      return;
+    }
 
     const vndb = new VNDB("clientname", {});
     
@@ -25,6 +47,7 @@ async function _getUserList(req, res, next) {
     let searchingUser = true;
   
     while (searchingUser) {
+      console.log("Looking for page " + pagination);
       await vndb.query(`get ulist basic (uid=${req.params.id}) {"page": ${pagination}, "results":100}`)
         .then((response) => {
           userList.push(...response.items);
@@ -43,13 +66,11 @@ async function _getUserList(req, res, next) {
   
     vndb.destroy();
 
-    console.log(userList);
     
     res.user = user[0];
 
     // Date Conversion
     for (let i = 0; i < userList.length; i++) {
-        console.log("Loop: " + i);
         if (userList[i].started != null ) {
             let date = new Date(userList[i].started * 1000);
             userList[i].started = date;
@@ -81,59 +102,9 @@ async function _getUserList(req, res, next) {
     next();
 }
 
-const getUserList = async (req, res) => {
-    const vndb = new VNDB("clientname", {});
-    
-    let userList = [];
-    let pagination = 1;
-    let searchingUser = true;
-  
-    while (searchingUser) {
-      await vndb.query(`get ulist basic (uid=${req.params.id}) {"page": ${pagination}, "results":100}`)
-        .then((response) => {
-          userList.push(...response.items);
-  
-          if (response.more === true) {
-            pagination++;
-          }
-          else {
-            searchingUser = false;
-          }
-        })
-        .catch ((e) => {
-          res.status(500).json({message: e.message});
-        })
-    }
-  
-    vndb.destroy();
-  
-    res.status(200).json(userList);
-};
-
-const updateUserNovels = async (req, res) => {
-    
-    if (res.user.id === null) {
-        res.status(400).json({ message: "User does not exist." });
-    }
-
-    const userToUpdate = new User({
-        id: res.user.id,
-        username: res.user.username,
-        vnlist: res.ulist,
-    });
-
-    try {
-        await User.deleteMany({ id: res.user.id });
-        const newUser = userToUpdate.save();
-        res.status(201).json(newUser);
-    }
-    catch (e) {
-        res.status(400).json({ message: e.message });
-    }
-};
 
 module.exports = {
     _getUserList,
-    getUserList,
+    getUserNovels,
     updateUserNovels
 }
