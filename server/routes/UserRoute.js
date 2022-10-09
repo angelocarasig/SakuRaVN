@@ -10,7 +10,7 @@ router.get("/get", UserController.getAllUsers);
 router.get("/get/:id", UserController.searchUser, UserController.getUser);
 
 // Get uList
-router.get("/get/ulist/:id", UserController.getUList);
+router.get("/get/ulist/:id", UserController.getUserList);
 
 // Add user
 router.post("/add/:id", UserController.addUser);

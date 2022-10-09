@@ -19,7 +19,7 @@ POST http://localhost:8080/user/add/110475
 ###
 
 // Delete User
-DELETE http://localhost:8080/user/delete/110475
+DELETE http://localhost:8080/user/delete/1
 
 ###
 

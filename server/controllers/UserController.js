@@ -42,6 +42,8 @@ const addUser = (req, res) => {
 
 // Only updates username as the other value is primary
 const updateUser = (req, res) => {
+  const vndb = new VNDB("clientname", {});
+
   vndb
     .query(`get user basic (id = ${req.params.id})`)
     .then((response) => {
@@ -92,39 +94,40 @@ async function searchUser(req, res, next) {
   next();
 }
 
-const getUList = (req, res) => {
-  let ulist = [];
+const getUserList = async (req, res) => {
+  const vndb = new VNDB("clientname", {});
+  
+  let userList = [];
+  let pagination = 1;
+  let searchingUser = true;
 
-  console.log("Searching ulist for " + req.params.id);
-  const data = _getUlist(req.params.id, 1);
+  while (searchingUser) {
+    await vndb.query(`get ulist basic (uid=${req.params.id}) {"page": ${pagination}, "results":100}`)
+      .then((response) => {
+        userList.push(...response.items);
 
-  res.status(200).send(data);
-}
+        if (response.more === true) {
+          pagination++;
+        }
+        else {
+          searchingUser = false;
+        }
+      })
+      .catch ((e) => {
+        res.status(500).json({message: e.message});
+      })
+  }
 
-function _getUlist(id, page) {
-    
-    const vndb = new VNDB("clientname", {});
-    let result;
+  vndb.destroy();
 
-    vndb.query(`get ulist basic (uid=${id}) {"page": ${page}, "results":25}`)
-    .then((response) => {
-        result = response;
-    })
-    .catch((e) => {
-        console.log(e);
-    });
-    
-    vndb.destroy();
-
-    while (result === null) {};
-    return result;
+  res.status(200).json(userList);
 };
 
 module.exports = {
   searchUser,
   getAllUsers,
   getUser,
-  getUList,
+  getUserList,
   addUser,
   updateUser,
   deleteUser,
