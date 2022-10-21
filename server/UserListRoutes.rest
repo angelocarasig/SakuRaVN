@@ -1,0 +1,7 @@
+### Get user's list of novels
+
+GET http://localhost:8080/userlist/get/110475
+
+### Update user list's novels
+
+PATCH http://localhost:8080/userlist/update/110475

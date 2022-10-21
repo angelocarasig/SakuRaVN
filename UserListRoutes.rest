@@ -1,7 +1,0 @@
-### Get user list
-
-GET http://localhost:8080/userlist/get/110475
-
-### Update user list
-
-PATCH http://localhost:8080/userlist/update/11045

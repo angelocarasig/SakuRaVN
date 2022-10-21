@@ -26,9 +26,9 @@ const vnSchema = new mongoose.Schema({
         type: Number
     },
     screens: [{
-        id: Number,
         image: String
     }]
+    
 });
 
 module.exports = mongoose.model("vn", vnSchema);

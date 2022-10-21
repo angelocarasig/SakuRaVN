@@ -20,7 +20,7 @@ async function _updateNovels(req, res, next) {
     }
 
     while (searchingUser) {
-        await vndb.query(`get vn basic,anime (id=[${ulistNovelIDs}]) {"page": ${pagination}, "results":25}`)
+        await vndb.query(`get vn basic,details,screens,titles,stats (id=[${ulistNovelIDs}]) {"page": ${pagination}, "results":25}`)
           .then((response) => {
             ulistVNs.push(...response.items);
     
@@ -41,7 +41,7 @@ async function _updateNovels(req, res, next) {
 
     for (let i = 0; i < ulistVNs.length; i++) {
 
-        VNs.find({"id": ulistVNs[i].id}, function(err, novel) {
+        VNs.find({"id": ulistVNs[i].vn}, function(err, novel) {
           if (novel.length === 0 || err) {
             console.log("Novel with corresponding ID not found. Adding to database...");
             let newNovel = new VNs(ulistVNs[i]).save();
@@ -85,6 +85,21 @@ async function searchNovel(req, res, next) {
   
   res.novel = novel[0];
   next();
+}
+
+async function _addNovel(req, res, next) {
+  let novel;
+  const vndb = new VNDB("clientname", {});
+  await vndb.query(`get vn basic,details,screens,titles,stats (id=[${req.params.id}`)
+          .then((response) => {
+            novel = response.items;
+          })
+          .catch ((e) => {
+            next(NovelException.internal(e.message));
+            return;
+          })
+  
+  
 }
 
 module.exports = {
